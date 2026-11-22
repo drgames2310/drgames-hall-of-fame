@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D_RGames Hall of Fame</title>
+<style>
+body {
+  background: #100719;
+  color: white;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #c084fc;
+}
+.player {
+  display: flex;
+  justify-content: space-between;
+  background: #241333;
+  border: 1px solid #873bce;
+  border-radius: 10px;
+  padding: 14px;
+  margin: 10px 0;
+}
+.rank { color: #e9b8ff; font-weight: bold; }
+.points { color: #d8b4fe; }
+</style>
+</head>
+<body>
+<h1>🏆 D_RGames Hall of Fame</h1>
+<div id="players">Φόρτωση...</div>
+<script>
+async function update() {
+  try {
+    const response = await fetch("https://drgames-hall-of-fame.onrender.com/halloffame");
+    const data = await response.json();
+    document.getElementById("players").innerHTML =
+      data.length
+        ? data.slice(0,5).map((p,i) =>
+          `<div class="player"><span class="rank">#${i+1} ${p.username}</span><span class="points">${p.spent} πόντοι</span></div>`
+        ).join("")
+        : "Δεν υπάρχουν ακόμη εξαργυρώσεις.";
+  } catch {
+    document.getElementById("players").textContent = "Το Hall of Fame θα εμφανιστεί σύντομα.";
+  }
+}
+update();
+setInterval(update, 60000);
+</script>
+</body>
+</html>
