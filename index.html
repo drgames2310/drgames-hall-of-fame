@@ -14,16 +14,37 @@ h1{color:#c58cff}
 <h1>🏆 D_RGames Hall of Fame</h1>
 <div id="ranking">Φόρτωση...</div>
 <script>
-fetch('./halloffame.json')
-.then(r=>r.json())
-.then(players=>{
- const box=document.getElementById('ranking');
- if(!players.length){box.textContent='Δεν υπάρχουν ακόμη καταχωρήσεις.';return;}
- box.innerHTML=players.slice(0,5).map((p,i)=>
- <div class="player">${i+1}. ${p.username} — ${p.spent} πόντοι</div>
- ).join('');
-})
-.catch(()=>document.getElementById('ranking').textContent='Δεν ήταν δυνατή η φόρτωση.');
+async function loadHallOfFame() {
+  const box = document.getElementById('ranking');
+
+  try {
+    const response = await fetch('./halloffame.json?v=' + Date.now());
+
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+
+    const players = await response.json();
+    box.innerHTML = '';
+
+    if (!players.length) {
+      box.textContent = 'Δεν υπάρχουν ακόμη καταχωρήσεις.';
+      return;
+    }
+
+    players.slice(0, 5).forEach((p, i) => {
+      const item = document.createElement('div');
+      item.className = 'player';
+      item.textContent = (i + 1) + '. ' + p.username + ' — ' + p.spent + ' πόντοι';
+      box.appendChild(item);
+    });
+
+  } catch (error) {
+    box.textContent = 'Σφάλμα φόρτωσης: ' + error.message;
+  }
+}
+
+loadHallOfFame();
 </script>
 </body>
 </html>
